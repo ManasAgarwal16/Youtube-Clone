@@ -8,6 +8,9 @@ import {
     SELECTED_VIDEO_FAIL,
     SELECTED_VIDEO_REQUEST,
     SELECTED_VIDEO_SUCCESS,
+    SEARCHED_VIDEO_FAIL,
+   SEARCHED_VIDEO_REQUEST,
+   SEARCHED_VIDEO_SUCCESS,
  } from '../actionType'
  
  import request from '../../api'
@@ -128,4 +131,32 @@ import {
        })
     }
  }
+ 
+ export const getVideosBySearch = keyword => async dispatch => {
+   try {
+      dispatch({
+         type: SEARCHED_VIDEO_REQUEST,
+      })
+      const { data } = await request('/search', {
+         params: {
+            part: 'snippet',
+
+            maxResults: 20,
+            q: keyword, //query
+            type: 'video,channel',
+         },
+      })
+
+      dispatch({
+         type: SEARCHED_VIDEO_SUCCESS,
+         payload: data.items,
+      })
+   } catch (error) {
+      console.log(error.message)
+      dispatch({
+         type: SEARCHED_VIDEO_FAIL,
+         payload: error.message,
+      })
+   }
+}
  
